@@ -1,6 +1,8 @@
 import streamlit
 import pandas as pd
-
+import requests
+import snowflake.connector
+from urllib.error import URLError
 streamlit.title("My Dream Resto")
 streamlit.header('Breakfast Favourites')
 streamlit.text('🥣 Omega 3 & Blueberry Oatmeal')
@@ -10,6 +12,7 @@ streamlit.text('🥑🍞 Avacado Toast')
 
 streamlit.header('🍌🥭 Build Your Own Fruit Smoothie 🥝🍇')
 
+#import pandas as pd
 my_fruit_list = pd.read_csv("https://uni-lab-files.s3.us-west-2.amazonaws.com/dabw/fruit_macros.txt")
 my_fruit_list = my_fruit_list.set_index('Fruit')
 # Let's put a pick list here so they can pick the fruit they want to include 
@@ -18,10 +21,10 @@ fruits_to_show = my_fruit_list.loc[fruits_selected]
 # Display the table on the page.
 streamlit.dataframe(fruits_to_show)
 
-
-import requests
 fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
 streamlit.write('The user entered ', fruit_choice)
+
+#import requests
 fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
 
 streamlit.header("Fruityvice Fruit Advice!")
@@ -34,7 +37,7 @@ fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
 # write your own comment - what does this do?
 streamlit.dataframe(fruityvice_normalized)
 
-import snowflake.connector
+streamlit.stop() 
 
 my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
 my_cur = my_cnx.cursor()
